@@ -603,6 +603,10 @@ ul, ol {
   color: var(--text-muted);
 }
 
+.search-btn-mobile {
+  padding: 10px 28px;
+}
+
 /* === AVATAR === */
 .avatar {
   width: 36px;
@@ -714,6 +718,35 @@ ul, ol {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .page-header { flex-direction: column; align-items: flex-start; }
+  
+  .data-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .modal-box {
+    padding: var(--space-4);
+  }
+
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  .mobile-only-count {
+    display: inline !important;
+  }
+
+  .search-btn-mobile {
+    padding: 6px 14px !important;
+    font-size: 13px !important;
+    margin-left: -8px; /* Move slightly to the left */
+  }
+  
+  .search-input-mobile {
+    font-size: 13px !important;
+  }
 }
 
 @media (max-width: 480px) {

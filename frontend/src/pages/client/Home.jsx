@@ -110,12 +110,13 @@ export default function ClientHome() {
               placeholder="Rechercher un plat..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ flex: 1, background: 'none', border: 'none', outline: 'none', color: 'var(--text-primary)', fontSize: 15 }}
+              className="search-input-mobile"
+              style={{ flex: 1, background: 'none', border: 'none', outline: 'none', color: 'var(--text-primary)', fontSize: 15, minWidth: 0 }}
             />
             <button
-              className="btn btn-primary"
+              className="btn btn-primary search-btn-mobile"
               style={{
-                borderRadius: 40, padding: '10px 28px',
+                borderRadius: 40,
                 background: 'linear-gradient(135deg, #f97316, #ea580c)', border: 'none'
               }}
             >

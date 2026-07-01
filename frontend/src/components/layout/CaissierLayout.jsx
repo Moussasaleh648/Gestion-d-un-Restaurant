@@ -173,7 +173,8 @@ export default function CaissierLayout() {
                 width: 7, height: 7, borderRadius: '50%', background: '#ef4444',
                 display: 'inline-block', animation: 'caissierPulse 1.5s infinite'
               }} />
-              {pendingOrders} commande{pendingOrders > 1 ? 's' : ''} en attente
+              <span className="hide-on-mobile">{pendingOrders} commande{pendingOrders > 1 ? 's' : ''} en attente</span>
+              <span className="mobile-only-count" style={{ display: 'none' }}>{pendingOrders}</span>
             </div>
           )}
           <button style={{
