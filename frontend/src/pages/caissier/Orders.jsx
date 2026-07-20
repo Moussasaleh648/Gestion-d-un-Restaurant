@@ -5,6 +5,7 @@ import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
 import { ORDER_STATUS } from '../../data/mockData';
 import { Link } from 'react-router-dom';
+import { formatOrderId } from '../../utils/orderUtils';
 
 const STATUS_CONFIG = {
   [ORDER_STATUS.PENDING]: {
@@ -68,7 +69,7 @@ export default function CaissierOrders() {
   };
 
   return (
-    <div>
+    <div className="caissier-orders-page">
       <div className="page-header">
         <div>
           <h1>Commandes</h1>
@@ -139,8 +140,14 @@ export default function CaissierOrders() {
         </div>
       </div>
 
-      {/* Liste des commandes */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Liste des commandes (Grille fluide) */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+        gap: 16,
+        width: '100%',
+        maxWidth: '100%'
+      }}>
         {filtered.map((order, i) => {
           const cfg = STATUS_CONFIG[order.status];
           return (
@@ -148,104 +155,116 @@ export default function CaissierOrders() {
               key={order.id}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
               style={{
-                background: 'var(--surface-2)', border: `1px solid ${cfg?.color}30`,
+                width: '100%',
+                background: 'var(--surface-2)',
                 borderLeft: `4px solid ${cfg?.color}`,
-                borderRadius: 16, padding: 24, overflow: 'hidden',
+                borderTop: '1px solid var(--border-subtle)',
+                borderRight: '1px solid var(--border-subtle)',
+                borderBottom: '1px solid var(--border-subtle)',
+                borderRadius: 14,
+                padding: 16,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 12,
+                boxSizing: 'border-box'
               }}
             >
-              <div style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-                flexWrap: 'wrap', gap: 12
-              }}>
-                <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 28 }}>{cfg?.icon}</div>
-                  </div>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-                      <span style={{ fontWeight: 800, color: '#f97316', fontSize: 15 }}>#{order.id}</span>
-                      <span style={{
-                        fontSize: 12, padding: '3px 10px', borderRadius: 20,
-                        background: cfg?.bg, color: cfg?.color, fontWeight: 600
-                      }}>
-                        {cfg?.label}
-                      </span>
-                      <span style={{
-                        fontSize: 12, padding: '3px 10px', borderRadius: 20,
-                        background: order.type === 'delivery' ? 'rgba(59,130,246,0.1)' : 'rgba(139,92,246,0.1)',
-                        color: order.type === 'delivery' ? '#60a5fa' : '#a78bfa'
-                      }}>
-                        {order.type === 'delivery' ? '🛵 Livraison' : '🍽️ Sur place'}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 8 }}>
-                      <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{order.clientName}</span>
-                      {order.type === 'dine-in' && order.table && <span style={{
-                        color: 'var(--text-muted)',
-                        marginLeft: 8
-                      }}>— {order.table}</span>}
-                      {order.type === 'delivery' && <span style={{
-                        color: 'var(--text-muted)',
-                        marginLeft: 8
-                      }}>— {order.address}</span>}
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                      {order.items?.map((item, idx) => (
-                        <span key={idx} style={{
-                          fontSize: 12, padding: '3px 10px', borderRadius: 20,
-                          background: 'var(--surface-3)', color: 'var(--text-secondary)'
-                        }}>
-                          {item.quantity}x {item.name}
-                        </span>
-                      ))}
-                    </div>
-                    {order.notes && (
-                      <div style={{ marginTop: 8, fontSize: 13, color: '#f59e0b', fontStyle: 'italic' }}>
-                        📝 {order.notes}
-                      </div>
-                    )}
-                  </div>
+              {/* En-tête : ID Commande, Statut & Type */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ color: cfg?.color, fontWeight: 800 }}>{formatOrderId(order.id)}</span>
+                  <span style={{
+                    padding: '2px 8px', fontSize: 12, background: cfg?.bg,
+                    color: cfg?.color, borderRadius: 99, fontWeight: 600
+                  }}>
+                    {cfg?.label}
+                  </span>
                 </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10 }}>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: '#10b981' }}>
-                    {order.total?.toLocaleString('fr-FR')} FCFA
-                  </div>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                    {new Date(order.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    {order.status !== ORDER_STATUS.DELIVERED && order.status !== ORDER_STATUS.CANCELLED && (
-                      <>
-                        {cfg?.next && (
-                          <button
-                            onClick={() => handleAdvance(order)}
-                            style={{
-                              padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 600,
-                              background: 'linear-gradient(135deg, #f97316, #ea580c)', border: 'none',
-                              color: 'white', cursor: 'pointer', transition: 'all 0.2s',
-                            }}
-                          >
-                            {cfg.next === ORDER_STATUS.CONFIRMED ? '✓ Confirmer' :
-                              cfg.next === ORDER_STATUS.PREPARING ? '👨‍🍳 En préparation' :
-                                cfg.next === ORDER_STATUS.READY ? '🔔 Prêt' : '✅ Livré'}
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleCancel(order.id)}
-                          style={{
-                            padding: '8px 12px', borderRadius: 10, fontSize: 13,
-                            background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)',
-                            color: '#f87171', cursor: 'pointer',
-                          }}
-                        >
-                          <XCircle size={14} />
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </div>
+                <span style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+                  {order.type === 'delivery' ? '🛵 Livraison' : '🍽️ Sur place'}
+                </span>
               </div>
+
+              {/* Infos Client (min-w-0 pour éviter la déformation) */}
+              <div style={{ minWidth: 0 }}>
+                <h4 style={{
+                  color: 'var(--text-primary)', fontWeight: 600, fontSize: 14, margin: 0,
+                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                }}>
+                  {order.clientName}
+                </h4>
+                {(order.table || order.address) && (
+                  <p style={{
+                    fontSize: 12, color: 'var(--text-muted)', margin: '2px 0 0',
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                  }}>
+                    {order.type === 'dine-in' ? `Table ${order.table}` : order.address}
+                  </p>
+                )}
+              </div>
+
+              {/* Les articles commandés (Flex-wrap pour le retour à la ligne automatique) */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {order.items?.map((item, idx) => (
+                  <span key={idx} style={{
+                    padding: '4px 8px', background: 'var(--surface-3)', fontSize: 11,
+                    borderRadius: 6, color: 'var(--text-secondary)', whiteSpace: 'nowrap',
+                    border: '1px solid var(--border-default)'
+                  }}>
+                    {item.quantity} x {item.name}
+                  </span>
+                ))}
+              </div>
+
+              {/* Notes si existantes */}
+              {order.notes && (
+                <div style={{ fontSize: 12, color: '#f59e0b', fontStyle: 'italic', marginTop: -4 }}>
+                  📝 {order.notes}
+                </div>
+              )}
+
+              {/* Bas de carte : Prix & Heure */}
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                borderTop: '1px solid var(--border-subtle)', paddingTop: 12, marginTop: 4
+              }}>
+                <span style={{ color: '#10b981', fontWeight: 800, fontSize: 16 }}>
+                  {order.total?.toLocaleString('fr-FR')} FCFA
+                </span>
+                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                  {new Date(order.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+
+              {/* Boutons d'action rapides */}
+              {order.status !== ORDER_STATUS.DELIVERED && order.status !== ORDER_STATUS.CANCELLED && (
+                <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                  {cfg?.next && (
+                    <button
+                      onClick={() => handleAdvance(order)}
+                      style={{
+                        flex: 1, padding: 10, borderRadius: 10, fontSize: 14, fontWeight: 600,
+                        background: 'linear-gradient(135deg, #f97316, #ea580c)', border: 'none',
+                        color: 'white', cursor: 'pointer', transition: 'all 0.2s',
+                      }}
+                    >
+                      {cfg.next === ORDER_STATUS.CONFIRMED ? '✓ Confirmer' :
+                        cfg.next === ORDER_STATUS.PREPARING ? '👨‍🍳 Préparation' :
+                          cfg.next === ORDER_STATUS.READY ? '🔔 Prêt' : '✅ Livrée'}
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleCancel(order.id)}
+                    style={{
+                      padding: '10px 14px', borderRadius: 10,
+                      background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)',
+                      color: '#f87171', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}
+                  >
+                    <XCircle size={18} />
+                  </button>
+                </div>
+              )}
             </motion.div>
           );
         })}

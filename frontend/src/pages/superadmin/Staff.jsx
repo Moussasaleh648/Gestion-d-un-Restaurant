@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Edit2, Trash2, Phone, Wallet, Users } from 'lucide-react';
+import { Plus, Edit2, Trash2, Phone, Wallet } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useToast } from '../../context/ToastContext';
 
@@ -14,8 +14,8 @@ export default function SuperAdminStaff() {
 
   const openAdd = () => {
     setEditTarget(null); setForm({
-      name: '', role: 'Serveur', phone: '',
-      salary: '', status: 'active'
+      name: '', role: 'Serveur', phone: '', salary: '',
+      status: 'active'
     }); setShowModal(true);
   };
   const openEdit = (s) => { setEditTarget(s); setForm({ ...s }); setShowModal(true); };
@@ -34,7 +34,7 @@ export default function SuperAdminStaff() {
   };
 
   const handleDelete = (id, name) => {
-    if (window.confirm(`Supprimer ${name} ?`)) {
+    if (window.confirm(`Supprimer ${name} de l'équipe ?`)) {
       deleteStaffMember(id);
       toast.success('Employé retiré');
     }
@@ -49,92 +49,113 @@ export default function SuperAdminStaff() {
   const activeStaff = staff.filter(s => s.status === 'active');
   const totalSalary = staff.reduce((sum, s) => sum + (s.salary || 0), 0);
 
-  const roleColors = {
-    'Caissier': '#f97316', 'Chef Cuisinière': '#ef4444', 'Aide-Cuisinier': '#f59e0b',
-    'Serveur': '#3b82f6', 'Serveuse': '#3b82f6', 'Livreur': '#10b981', 'Manager': '#8b5cf6',
-  };
-
   return (
     <div>
       <div className="page-header">
         <div>
           <h1>Personnel</h1>
-          <p>{staff.length} employés - {activeStaff.length} actifs - Masse salariale : {totalSalary.toLocaleString('fr-FR')} FCFA</p>
+          <p>{staff.length} employés - {activeStaff.length} actifs</p>
         </div>
-        <button className="btn btn-primary" onClick={openAdd} style={{ gap: 8 }}><Plus size={16} /> Ajouter un employé</button>
+        <button className="btn btn-primary" onClick={openAdd}
+          style={{ background: 'linear-gradient(135deg, #f97316, #ea580c)', border: 'none', gap: 8 }}>
+          <Plus size={16} /> Ajouter un employé
+        </button>
       </div>
 
-      {/* Tableau du personnel */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-        style={{ background: 'var(--surface-2)', border: '1px solid var(--border-subtle)', borderRadius: 16, overflow: 'hidden' }}>
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Employé</th>
-              <th>Rôle</th>
-              <th>Téléphone</th>
-              <th>Salaire</th>
-              <th>Statut</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {staff.map(s => (
-              <tr key={s.id}>
-                <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div style={{
-                      width: 36, height: 36, borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #f97316, #ea580c)', color: 'white', display: 'flex',
-                      alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700
-                    }}>
-                      {s.name.charAt(0)}
-                    </div>
-                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{s.name}</span>
-                  </div>
-                </td>
-                <td>
-                  <span style={{
-                    fontSize: 12, padding: '3px 10px', borderRadius: 20,
-                    background: `${roleColors[s.role] || '#6b7280'}15`, color: roleColors[s.role] || '#6b7280',
-                    fontWeight: 600
-                  }}>
-                    {s.role}
-                  </span>
-                </td>
-                <td style={{ color: 'var(--text-secondary)', fontSize: 13 }}>{s.phone || '—'}</td>
-                <td style={{ fontWeight: 700, color: '#10b981' }}>{s.salary?.toLocaleString('fr-FR')} FCFA</td>
-                <td>
-                  <span style={{
-                    fontSize: 12, padding: '3px 10px', borderRadius: 20,
-                    background: s.status === 'active' ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)',
-                    color: s.status === 'active' ? '#10b981' : '#f59e0b', fontWeight: 600
-                  }}>
-                    {s.status === 'active' ? 'Actif' : 'En congé'}
-                  </span>
-                </td>
-                <td>
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    <button className="btn btn-ghost btn-sm" onClick={() => openEdit(s)}><Edit2 size={13} /></button>
-                    <button className="btn btn-sm" onClick={() => toggleStatus(s)}
-                      style={{
-                        background: s.status === 'active' ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)',
-                        color: s.status === 'active' ? '#f59e0b' : '#10b981', border: 'none', fontSize: 12
-                      }}>
-                      {s.status === 'active' ? 'Congé' : 'Activer'}
-                    </button>
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(s.id, s.name)}>
-                      <Trash2 size={13} /></button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {staff.length === 0 && (
-          <div className="empty-state"><div className="empty-state-icon">👥</div><h3>Aucun employé</h3></div>
-        )}
-      </motion.div>
+      {/* Statistiques */}
+      <div style={{ display: 'flex', gap: 16, marginBottom: 32 }}>
+        <div style={{
+          flex: 1, background: 'rgba(249,115,22,0.08)',
+          border: '1px solid rgba(249,115,22,0.2)', borderRadius: 14, padding: '16px 20px'
+        }}>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Total employés</div>
+          <div style={{ fontSize: 26, fontWeight: 800, color: '#f97316' }}>{staff.length}</div>
+        </div>
+        <div style={{
+          flex: 1, background: 'rgba(16,185,129,0.08)',
+          border: '1px solid rgba(16,185,129,0.2)', borderRadius: 14, padding: '16px 20px'
+        }}>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Actifs</div>
+          <div style={{ fontSize: 26, fontWeight: 800, color: '#10b981' }}>{activeStaff.length}</div>
+        </div>
+        <div style={{
+          flex: 1, background: 'rgba(139,92,246,0.08)',
+          border: '1px solid rgba(139,92,246,0.2)', borderRadius: 14, padding: '16px 20px'
+        }}>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Masse salariale</div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: '#8b5cf6' }}>{totalSalary.toLocaleString('fr-FR')} FCFA</div>
+        </div>
+      </div>
+
+      <div className="grid-3">
+        {staff.map((s, i) => (
+          <motion.div key={s.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.08 }}
+            style={{
+              background: 'var(--surface-2)', border: '1px solid var(--border-subtle)',
+              borderRadius: 16, padding: 20, opacity: s.status === 'active' ? 1 : 0.7
+            }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
+              <div style={{
+                width: 48, height: 48, borderRadius: 12,
+                background: 'linear-gradient(135deg, #f97316, #ea580c)', color: 'white',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 700
+              }}>
+                {s.name.charAt(0)}
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: 15, color: 'var(--text-primary)', marginBottom: 4 }}>{s.name}</h3>
+                <span style={{
+                  fontSize: 11, background: 'rgba(249,115,22,0.15)', color: '#f97316',
+                  padding: '2px 10px', borderRadius: 10, fontWeight: 600
+                }}>{s.role}</span>
+              </div>
+              <span style={{
+                fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 20,
+                background: s.status === 'active' ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)',
+                color: s.status === 'active' ? '#10b981' : '#f59e0b'
+              }}>
+                {s.status === 'active' ? 'Actif' : 'En congé'}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-secondary)' }}>
+                <Phone size={14} /> {s.phone || 'Non renseigné'}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-secondary)' }}>
+                <Wallet size={14} /> {s.salary ? `${s.salary.toLocaleString('fr-FR')} FCFA / mois` : 'Non renseigné'}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 6, paddingTop: 14, borderTop: '1px solid var(--border-subtle)' }}>
+              <button className="btn btn-ghost btn-sm" style={{ flex: 1, justifyContent: 'center' }} onClick={() => openEdit(s)}>
+                <Edit2 size={12} /> Modifier
+              </button>
+              <button onClick={() => toggleStatus(s)} style={{
+                padding: '6px 10px', borderRadius: 8,
+                background: s.status === 'active' ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)',
+                border: `1px solid ${s.status === 'active' ? 'rgba(245,158,11,0.3)' : 'rgba(16,185,129,0.3)'}`,
+                color: s.status === 'active' ? '#f59e0b' : '#10b981', cursor: 'pointer', fontSize: 11, fontWeight: 600
+              }}>
+                {s.status === 'active' ? 'Congé' : 'Activer'}
+              </button>
+              <button className="btn btn-danger btn-sm" style={{ padding: '6px 10px' }}
+                onClick={() => handleDelete(s.id, s.name)}>
+                <Trash2 size={12} />
+              </button>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {staff.length === 0 && (
+        <div className="empty-state">
+          <div className="empty-state-icon">👥</div>
+          <h3>Aucun employé</h3>
+          <p>Ajoutez des employés à votre équipe.</p>
+        </div>
+      )}
 
       {/* Fenêtre modale */}
       {showModal && (
@@ -143,15 +164,15 @@ export default function SuperAdminStaff() {
             <div className="modal-header">
               <h2>{editTarget ? 'Modifier employé' : 'Nouvel employé'}</h2>
               <button onClick={() => setShowModal(false)} style={{
-                color: 'var(--text-muted)', cursor: 'pointer',
-                background: 'none', border: 'none', fontSize: 20
+                color: 'var(--text-muted)',
+                cursor: 'pointer', background: 'none', border: 'none', fontSize: 20
               }}>✕</button>
             </div>
             <div style={{ display: 'grid', gap: 16 }}>
               <div className="form-group">
                 <label className="form-label">Nom complet</label>
-                <input className="form-input" placeholder="Ex: Fatima Oumar" value={form.name}
-                  onChange={e => setForm({ ...form, name: e.target.value })} />
+                <input className="form-input" placeholder="Ex: Fatima Oumar"
+                  value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
               </div>
               <div className="form-group">
                 <label className="form-label">Rôle</label>
@@ -166,8 +187,8 @@ export default function SuperAdminStaff() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <div className="form-group">
                   <label className="form-label">Téléphone</label>
-                  <input className="form-input" placeholder="+235 66 ..." value={form.phone}
-                    onChange={e => setForm({ ...form, phone: e.target.value })} />
+                  <input className="form-input" placeholder="+235 66 ..."
+                    value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Salaire (FCFA/mois)</label>
@@ -179,8 +200,10 @@ export default function SuperAdminStaff() {
             <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
               <button className="btn btn-ghost" style={{ flex: 1, justifyContent: 'center' }}
                 onClick={() => setShowModal(false)}>Annuler</button>
-              <button className="btn btn-primary" style={{ flex: 2, justifyContent: 'center' }}
-                onClick={handleSave}>
+              <button className="btn btn-primary" style={{
+                flex: 2, justifyContent: 'center',
+                background: 'linear-gradient(135deg, #f97316, #ea580c)', border: 'none'
+              }} onClick={handleSave}>
                 {editTarget ? 'Enregistrer' : 'Ajouter'}
               </button>
             </div>

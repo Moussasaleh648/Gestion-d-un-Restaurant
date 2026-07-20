@@ -7,7 +7,7 @@ import { ROLES } from '../../data/mockData';
 
 const DEMO_ACCOUNTS = [
   { label: 'Super Admin', email: 'admin@fastfood.td', password: 'admin123', icon: Shield, color: '#c084fc' },
-  { label: 'Caissier', email: 'caissier@fastfood.td', password: 'caissier123', icon: Store, color: '#f97316' },
+  { label: 'Caissier', email: 'caissier2@fastfood.td', password: 'caissier123', icon: Store, color: '#f97316' },
   { label: 'Client', email: 'alice@mail.td', password: 'client123', icon: User, color: '#10b981' },
 ];
 

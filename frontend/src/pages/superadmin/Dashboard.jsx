@@ -3,6 +3,7 @@ import { Users, ShoppingBag, TrendingUp, ArrowUp, Activity, Table2, Star, UserCo
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { useData } from '../../context/DataContext';
 import { ROLES, ORDER_STATUS } from '../../data/mockData';
+import { formatOrderId } from '../../utils/orderUtils';
 
 const monthlyRevenue = [
   { month: 'Jan', revenue: 850000 }, { month: 'Fév', revenue: 720000 },
@@ -204,7 +205,7 @@ export default function SuperAdminDashboard() {
         <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-subtle)' }}>
           <h3 style={{ fontSize: 16, color: 'var(--text-primary)' }}>Dernières commandes</h3>
         </div>
-        <table className="data-table">
+        <table className="data-table hide-on-mobile">
           <thead>
             <tr>
               <th>ID</th>
@@ -217,7 +218,7 @@ export default function SuperAdminDashboard() {
           <tbody>
             {recentOrders.map(order => (
               <tr key={order.id}>
-                <td style={{ fontWeight: 600, color: '#f97316' }}>#{order.id}</td>
+                <td style={{ fontWeight: 600, color: '#f97316' }}>{formatOrderId(order.id)}</td>
                 <td>{order.clientName}</td>
                 <td style={{ fontWeight: 700, color: '#10b981' }}>{order.total?.toLocaleString('fr-FR')} FCFA</td>
                 <td>
@@ -241,6 +242,33 @@ export default function SuperAdminDashboard() {
             ))}
           </tbody>
         </table>
+        
+        {/* Cartes pour mobile */}
+        <div className="mobile-order-cards">
+          {recentOrders.map(order => (
+            <div key={order.id} style={{
+              background: 'var(--surface-3)', border: '1px solid var(--border-default)',
+              borderRadius: 12, padding: 16, display: 'flex', justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <div style={{ fontWeight: 800, marginBottom: 8, color: 'var(--text-primary)' }}>
+                  Commande <span style={{ color: '#f97316' }}>{formatOrderId(order.id)}</span>
+                </div>
+                <span style={{
+                  fontSize: 12, padding: '4px 12px', borderRadius: 20,
+                  background: `${statusColors[order.status]?.color}18`, color: statusColors[order.status]?.color,
+                  fontWeight: 600
+                }}>
+                  {statusColors[order.status]?.label}
+                </span>
+              </div>
+              <div style={{ fontWeight: 800, color: '#10b981', fontSize: 16 }}>
+                {order.total?.toLocaleString('fr-FR')} FCFA
+              </div>
+            </div>
+          ))}
+        </div>
       </motion.div>
     </div>
   );

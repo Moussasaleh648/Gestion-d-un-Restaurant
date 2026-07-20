@@ -4,6 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import { useData } from '../../context/DataContext';
 import { ORDER_STATUS } from '../../data/mockData';
 import { useAuth } from '../../context/AuthContext';
+import { formatOrderId } from '../../utils/orderUtils';
 
 const monthlyOrders = [
   { day: 'Lun', orders: 42 }, { day: 'Mar', orders: 58 },
@@ -73,7 +74,7 @@ export default function CaissierDashboard() {
   };
 
   return (
-    <div>
+    <div className="caissier-dashboard-page">
       <div className="page-header">
         <div>
           <h1>Tableau de bord</h1>
@@ -86,7 +87,7 @@ export default function CaissierDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="stats-grid">
+      <div className="stats-grid cashier-stats-grid">
         {stats.map((stat, i) => (
           <motion.div
             key={stat.label}
@@ -117,13 +118,13 @@ export default function CaissierDashboard() {
       </div>
 
       {/* Charts row */}
-      <div className="grid-2" style={{ gap: 24, marginBottom: 24 }}>
+      <div className="grid-2 cashier-summary-grid" style={{ gap: 24, marginBottom: 24 }}>
         {/* Chart commandes semaine */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+        <motion.div className="caissier-chart-card" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
           style={{ background: 'var(--surface-2)', border: '1px solid var(--border-subtle)', borderRadius: 16, padding: 24 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
             <div>
-              <h3 style={{ fontSize: 16, color: 'var(--text-primary)' }}>Commandes cette semaine</h3>
+              <h3 className="caissier-chart-title-mobile" style={{ fontSize: 16, color: 'var(--text-primary)' }}>Commandes cette semaine</h3>
               <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>Volume quotidien</p>
             </div>
             <span className="badge" style={{
@@ -173,7 +174,7 @@ export default function CaissierDashboard() {
       </div>
 
       {/* Tables status */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
+      <motion.div className="cashier-tables-card" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
         style={{
           background: 'var(--surface-2)', border: '1px solid var(--border-subtle)', borderRadius: 16,
           padding: 24, marginBottom: 24
@@ -209,7 +210,7 @@ export default function CaissierDashboard() {
       </motion.div>
 
       {/* Recent Orders */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
+      <motion.div className="cashier-orders-table-card" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
         style={{ background: 'var(--surface-2)', border: '1px solid var(--border-subtle)', borderRadius: 16, overflow: 'hidden' }}>
         <div style={{
           padding: '20px 24px', borderBottom: '1px solid var(--border-subtle)',
@@ -217,7 +218,7 @@ export default function CaissierDashboard() {
         }}>
           <h3 style={{ fontSize: 16, color: 'var(--text-primary)' }}>Commandes récentes</h3>
         </div>
-        <table className="data-table">
+        <table className="data-table hide-on-mobile">
           <thead>
             <tr>
               <th>ID</th>
@@ -230,7 +231,7 @@ export default function CaissierDashboard() {
           <tbody>
             {recentOrders.map(order => (
               <tr key={order.id}>
-                <td style={{ fontWeight: 600, color: '#f97316' }}>#{order.id}</td>
+                <td style={{ fontWeight: 600, color: '#f97316' }}>{formatOrderId(order.id)}</td>
                 <td>{order.clientName || 'Client'}</td>
                 <td style={{ fontWeight: 700, color: '#10b981' }}>{order.total?.toLocaleString('fr-FR')} FCFA</td>
                 <td>
@@ -254,6 +255,33 @@ export default function CaissierDashboard() {
             ))}
           </tbody>
         </table>
+        
+        {/* Cartes pour mobile */}
+        <div className="mobile-order-cards">
+          {recentOrders.map(order => (
+            <div key={order.id} style={{
+              background: 'var(--surface-3)', border: '1px solid var(--border-default)',
+              borderRadius: 12, padding: 16, display: 'flex', justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <div style={{ fontWeight: 800, marginBottom: 8, color: 'var(--text-primary)' }}>
+                  Commande <span style={{ color: '#f97316' }}>{formatOrderId(order.id)}</span>
+                </div>
+                <span style={{
+                  fontSize: 12, padding: '4px 12px', borderRadius: 20,
+                  background: `${statusColors[order.status]?.color}18`, color: statusColors[order.status]?.color,
+                  fontWeight: 600
+                }}>
+                  {statusColors[order.status]?.label}
+                </span>
+              </div>
+              <div style={{ fontWeight: 800, color: '#10b981', fontSize: 16 }}>
+                {order.total?.toLocaleString('fr-FR')} FCFA
+              </div>
+            </div>
+          ))}
+        </div>
       </motion.div>
 
       <style>{`

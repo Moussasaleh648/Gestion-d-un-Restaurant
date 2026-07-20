@@ -123,25 +123,33 @@ export default function CaissierTables() {
               }}>
                 {cfg.label}
               </span>
-              <div style={{ display: 'flex', gap: 8 }}>
+              {/* Boutons d'actions asymétriques (mobile-friendly) */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 16, width: '100%' }}>
+                {/* Bouton Changer Statut (flex-1) */}
                 <button
                   onClick={() => cycleStatus(table)}
                   style={{
-                    flex: 1, padding: '8px', borderRadius: 8, background: cfg.color,
-                    border: 'none', color: 'white', fontSize: 11, fontWeight: 700, cursor: 'pointer'
+                    flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    padding: '10px 12px', borderRadius: 8, background: cfg.color,
+                    border: 'none', color: 'white', fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                    transition: 'all 0.2s', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
                   }}
+                  title="Changer statut"
                 >
                   Changer statut
                 </button>
+                
+                {/* Bouton Supprimer (shrink-0) */}
                 <button
                   onClick={() => handleDeleteTable(table.id, table.number)}
                   style={{
-                    width: 32, borderRadius: 8, background: 'rgba(239,68,68,0.1)',
-                    border: 'none', color: '#ef4444', cursor: 'pointer', display: 'flex',
-                    alignItems: 'center', justifyContent: 'center'
+                    flexShrink: 0, padding: '10px', borderRadius: 8, background: 'rgba(239,68,68,0.1)',
+                    border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', cursor: 'pointer', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s'
                   }}
+                  title="Supprimer"
                 >
-                  <Trash2 size={12} />
+                  <Trash2 size={16} />
                 </button>
               </div>
             </motion.div>

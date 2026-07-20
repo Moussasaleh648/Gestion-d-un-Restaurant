@@ -158,6 +158,26 @@ export default function SuperAdminLayout() {
           <Outlet />
         </div>
       </main>
+
+      {/* Footer mobile superadmin */}
+      <nav className="superadmin-mobile-footer" aria-label="Navigation mobile superadmin">
+        <NavLink to="/superadmin/dashboard" className="superadmin-mobile-footer-item">
+          <LayoutDashboard size={18} />
+          <span>Accueil</span>
+        </NavLink>
+        <NavLink to="/superadmin/users" className="superadmin-mobile-footer-item">
+          <Users size={18} />
+          <span>Utilisateurs</span>
+        </NavLink>
+        <NavLink to="/superadmin/reports" className="superadmin-mobile-footer-item">
+          <BarChart2 size={18} />
+          <span>Rapports</span>
+        </NavLink>
+        <NavLink to="/superadmin/settings" className="superadmin-mobile-footer-item">
+          <Settings size={18} />
+          <span>Paramètres</span>
+        </NavLink>
+      </nav>
     </div>
   );
 }

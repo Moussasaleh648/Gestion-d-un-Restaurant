@@ -28,7 +28,7 @@ export default function ClientProfile() {
           width: 80, height: 80, borderRadius: 24,
           background: 'linear-gradient(135deg, #f97316, #ea580c)', color: 'white',
           display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32,
-          fontWeight: 800, boxShadow: '0 10px 30px rgba(249,115,22,0.3)'
+          fontWeight: 800
         }}>
           {currentUser?.avatar}
         </div>

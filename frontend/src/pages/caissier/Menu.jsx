@@ -106,87 +106,200 @@ export default function CaissierMenu() {
         </div>
       </div>
 
-      {/* Menu Grid */}
-      <div className="grid-3">
-        {filtered.map((item, i) => (
-          <motion.div
-            key={item.id}
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-            style={{
-              background: 'var(--surface-2)', border: '1px solid var(--border-subtle)',
-              borderRadius: 16, overflow: 'hidden', opacity: item.available ? 1 : 0.6,
-            }}
-          >
-            <div style={{ padding: 20 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-                <div style={{ display: 'flex', gap: 12 }}>
-                  <div style={{
-                    width: 52, height: 52, borderRadius: 12, background: 'rgba(249,115,22,0.08)',
-                    border: '1px solid rgba(249,115,22,0.2)', display: 'flex', alignItems: 'center',
-                    justifyContent: 'center', fontSize: 26, flexShrink: 0
-                  }}>
-                    {item.emoji}
-                  </div>
-                  <div>
-                    <h3 style={{
-                      fontSize: 15, fontWeight: 700, color: 'var(--text-primary)',
-                      marginBottom: 4
-                    }}>{item.name}</h3>
-                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                      <span style={{
-                        fontSize: 11, color: 'var(--text-muted)', background: 'var(--surface-3)',
-                        padding: '2px 8px', borderRadius: 10
-                      }}>{item.category}</span>
-                      {item.popular && <span style={{
-                        fontSize: 11, background: 'rgba(249,115,22,0.15)',
-                        color: '#f97316', padding: '2px 8px', borderRadius: 10,
-                        display: 'flex', alignItems: 'center', gap: 3
-                      }}><Flame size={9} />Pop.</span>}
+      {/* Menu Grid Desktop */}
+      <div className="hide-on-mobile">
+        <div className="grid-3">
+          {filtered.map((item, i) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+              style={{
+                background: 'var(--surface-2)', border: '1px solid var(--border-subtle)',
+                borderRadius: 16, overflow: 'hidden', opacity: item.available ? 1 : 0.6,
+              }}
+            >
+              <div style={{ padding: 20 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    <div style={{
+                      width: 52, height: 52, borderRadius: 12, background: 'rgba(249,115,22,0.08)',
+                      border: '1px solid rgba(249,115,22,0.2)', display: 'flex', alignItems: 'center',
+                      justifyContent: 'center', fontSize: 26, flexShrink: 0
+                    }}>
+                      {item.emoji}
+                    </div>
+                    <div>
+                      <h3 style={{
+                        fontSize: 15, fontWeight: 700, color: 'var(--text-primary)',
+                        marginBottom: 4
+                      }}>{item.name}</h3>
+                      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                        <span style={{
+                          fontSize: 11, color: 'var(--text-muted)', background: 'var(--surface-3)',
+                          padding: '2px 8px', borderRadius: 10
+                        }}>{item.category}</span>
+                        {item.popular && <span style={{
+                          fontSize: 11, background: 'rgba(249,115,22,0.15)',
+                          color: '#f97316', padding: '2px 8px', borderRadius: 10,
+                          display: 'flex', alignItems: 'center', gap: 3
+                        }}><Flame size={9} />Pop.</span>}
+                      </div>
                     </div>
                   </div>
+                  <div style={{ fontSize: 17, fontWeight: 800, color: '#10b981' }}>{item.price.toLocaleString('fr-FR')} FCFA</div>
                 </div>
-                <div style={{ fontSize: 17, fontWeight: 800, color: '#10b981' }}>{item.price.toLocaleString('fr-FR')} FCFA</div>
+                <p style={{
+                  fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: 16,
+                  height: 40, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical'
+                }}>
+                  {item.description}
+                </p>
+                <div style={{ display: 'flex', gap: 6, paddingTop: 16, borderTop: '1px solid var(--border-subtle)' }}>
+                  <button className="btn btn-ghost btn-sm" style={{ flex: 1, justifyContent: 'center' }} onClick={() => openEdit(item)}>
+                    <Edit2 size={13} /> Éditer
+                  </button>
+                  <button
+                    className="btn btn-sm" onClick={() => toggleStatus(item)}
+                    style={{
+                      flex: 1, justifyContent: 'center',
+                      background: item.available ? 'rgba(244,63,94,0.1)' : 'rgba(16,185,129,0.1)',
+                      color: item.available ? '#f87171' : '#34d399', border: '1px solid',
+                      borderColor: item.available ? 'rgba(244,63,94,0.3)' : 'rgba(16,185,129,0.3)'
+                    }}
+                  >
+                    {item.available ? <ToggleRight size={13} /> : <ToggleLeft size={13} />}
+                    {item.available ? 'Épuisé' : 'En stock'}
+                  </button>
+                  <button onClick={() => togglePopular(item)} style={{
+                    width: 32, height: 32,
+                    borderRadius: 8, background: item.popular ? 'rgba(249,115,22,0.1)' : 'var(--surface-3)',
+                    border: `1px solid ${item.popular ? 'rgba(249,115,22,0.3)' : 'var(--border-subtle)'}`,
+                    color: item.popular ? '#f97316' : 'var(--text-muted)', cursor: 'pointer', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center'
+                  }}>
+                    <Flame size={13} />
+                  </button>
+                  <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item.id, item.name)}
+                    style={{ padding: '6px 10px' }}>
+                    <Trash2 size={13} />
+                  </button>
+                </div>
               </div>
-              <p style={{
-                fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: 16,
-                height: 40, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical'
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Menu Grid Mobile */}
+      <div className="mobile-only-cards" style={{ display: 'none' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%', maxWidth: '100%' }}>
+          {filtered.map((item, i) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+              style={{
+                width: '100%',
+                background: 'var(--surface-2)',
+                border: '1px solid var(--border-default)',
+                borderRadius: 16,
+                padding: 16,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 16,
+                boxSizing: 'border-box',
+                opacity: item.available ? 1 : 0.65,
+              }}
+            >
+              {/* Partie Supérieure : Image + Infos */}
+              <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                {/* Image / Émoticône */}
+                <div style={{
+                  fontSize: 26, background: 'rgba(249,115,22,0.08)',
+                  border: '1px solid rgba(249,115,22,0.2)', padding: 12, borderRadius: 12,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                }}>
+                  {item.emoji}
+                </div>
+
+                {/* Détails du plat */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                    <h3 style={{
+                      color: 'var(--text-primary)', fontWeight: 700, fontSize: 16, margin: 0,
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                    }}>{item.name}</h3>
+                    <span style={{ color: '#10b981', fontWeight: 800, fontSize: 14, flexShrink: 0 }}>
+                      {item.price.toLocaleString('fr-FR')} FCFA
+                    </span>
+                  </div>
+                  
+                  {/* Badges (Catégorie, Populaire) */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
+                    <span style={{
+                      padding: '2px 8px', fontSize: 10, background: 'var(--surface-3)',
+                      color: 'var(--text-secondary)', borderRadius: 4
+                    }}>{item.category}</span>
+                    {item.popular && (
+                      <span style={{
+                        padding: '2px 8px', fontSize: 10, background: 'rgba(249,115,22,0.15)',
+                        color: '#f97316', borderRadius: 4, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4
+                      }}>🔥 Pop.</span>
+                    )}
+                  </div>
+
+                  {/* Description (tronquée sur mobile à 1 ligne) */}
+                  <p style={{
+                    color: 'var(--text-muted)', fontSize: 12, marginTop: 8, margin: '8px 0 0',
+                    overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box',
+                    WebkitLineClamp: 1, WebkitBoxOrient: 'vertical'
+                  }}>
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+
+              {/* Partie Inférieure : Boutons d'actions (Format Mobile Ultra Compact) */}
+              <div style={{
+                display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8,
+                marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--border-subtle)',
+                width: '100%', maxWidth: '100%', paddingLeft: 4, paddingRight: 4, boxSizing: 'border-box'
               }}>
-                {item.description}
-              </p>
-              <div style={{ display: 'flex', gap: 6, paddingTop: 16, borderTop: '1px solid var(--border-subtle)' }}>
-                <button className="btn btn-ghost btn-sm" style={{ flex: 1, justifyContent: 'center' }} onClick={() => openEdit(item)}>
-                  <Edit2 size={13} /> Éditer
-                </button>
+                {/* Bouton Éditer */}
                 <button
-                  className="btn btn-sm" onClick={() => toggleStatus(item)}
+                  onClick={() => openEdit(item)}
                   style={{
-                    flex: 1, justifyContent: 'center',
-                    background: item.available ? 'rgba(244,63,94,0.1)' : 'rgba(16,185,129,0.1)',
-                    color: item.available ? '#f87171' : '#34d399', border: '1px solid',
-                    borderColor: item.available ? 'rgba(244,63,94,0.3)' : 'rgba(16,185,129,0.3)'
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                    padding: '6px 8px', background: 'var(--surface-3)', color: 'var(--text-primary)',
+                    fontSize: 11, fontWeight: 600, borderRadius: 8, border: '1px solid var(--border-default)',
+                    cursor: 'pointer', transition: 'all 0.15s', width: '100%', flexShrink: 0
                   }}
                 >
-                  {item.available ? <ToggleRight size={13} /> : <ToggleLeft size={13} />}
-                  {item.available ? 'Épuisé' : 'En stock'}
+                  <span style={{ fontSize: 14, flexShrink: 0 }}>✏️</span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Éditer</span>
                 </button>
-                <button onClick={() => togglePopular(item)} style={{
-                  width: 32, height: 32,
-                  borderRadius: 8, background: item.popular ? 'rgba(249,115,22,0.1)' : 'var(--surface-3)',
-                  border: `1px solid ${item.popular ? 'rgba(249,115,22,0.3)' : 'var(--border-subtle)'}`,
-                  color: item.popular ? '#f97316' : 'var(--text-muted)', cursor: 'pointer', display: 'flex',
-                  alignItems: 'center', justifyContent: 'center'
-                }}>
-                  <Flame size={13} />
-                </button>
-                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item.id, item.name)}
-                  style={{ padding: '6px 10px' }}>
-                  <Trash2 size={13} />
+
+                {/* Bouton Statut (Épuisé / En stock) */}
+                <button
+                  onClick={() => toggleStatus(item)}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                    padding: '6px 8px', fontSize: 11, fontWeight: 600, borderRadius: 8,
+                    background: item.available ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)',
+                    border: `1px solid ${item.available ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}`,
+                    color: item.available ? '#f87171' : '#34d399',
+                    cursor: 'pointer', transition: 'all 0.15s', width: '100%', flexShrink: 0
+                  }}
+                >
+                  <span style={{ fontSize: 14, flexShrink: 0 }}>{item.available ? '🚫' : '✅'}</span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {item.available ? 'Épuisé' : 'En stock'}
+                  </span>
                 </button>
               </div>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))}
+        </div>
       </div>
 
       {filtered.length === 0 && (

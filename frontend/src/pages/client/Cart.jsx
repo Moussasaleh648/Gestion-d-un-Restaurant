@@ -113,14 +113,14 @@ export default function CartPage() {
   };
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 24px' }}>
+    <div className="cart-page">
       <h1 style={{ fontSize: 32, marginBottom: 8, color: 'var(--text-primary)' }}>Mon Panier</h1>
       <p style={{ color: 'var(--text-muted)', marginBottom: 32 }}>Finalisez votre commande chez
         <strong style={{ color: '#f97316' }}>{restaurant?.name}</strong></p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: 40, alignItems: 'start' }}>
+      <div className="cart-layout">
         {/* Colonne gauche - Articles du panier & Options */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        <div className="cart-main-column">
 
           {/* Articles */}
           <div style={{ background: 'var(--surface-2)', borderRadius: 16, border: '1px solid var(--border-subtle)', padding: 24 }}>
@@ -265,7 +265,7 @@ export default function CartPage() {
         </div>
 
         {/* Colonne droite - Récapitulatif & Paiement */}
-        <div style={{ position: 'sticky', top: 100 }}>
+        <div className="cart-summary-column">
 
           <div style={{
             background: 'var(--surface-2)', borderRadius: 16,

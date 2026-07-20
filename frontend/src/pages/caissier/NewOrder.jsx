@@ -91,7 +91,7 @@ export default function NewOrder() {
   }
 
   return (
-    <div>
+    <div className="caissier-new-order-page">
       <div className="page-header">
         <div>
           <h1>Nouvelle commande</h1>
@@ -99,32 +99,67 @@ export default function NewOrder() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 24, alignItems: 'start' }}>
+      <div className="new-order-grid">
         {/* Menu - Colonne gauche */}
         <div>
           {/* Filtre par catégorie */}
-          <div style={{
-            display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 12,
-            marginBottom: 20, scrollbarWidth: 'none'
-          }}>
-            {CATEGORIES.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
+          <div className="category-filters-container" style={{ marginBottom: 20 }}>
+            {/* Version Desktop */}
+            <div className="category-filters-desktop" style={{
+              display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 12,
+              scrollbarWidth: 'none'
+            }}>
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  style={{
+                    padding: '8px 18px', borderRadius: 20, fontSize: 13, fontWeight: 600,
+                    background: activeCategory === cat ? 'linear-gradient(135deg, #f97316, #ea580c)' : 'var(--surface-2)',
+                    color: activeCategory === cat ? 'white' : 'var(--text-secondary)',
+                    border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+                  }}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Version Mobile */}
+            <div className="category-filters-mobile" style={{ position: 'relative' }}>
+              <select
+                value={activeCategory}
+                onChange={e => setActiveCategory(e.target.value)}
                 style={{
-                  padding: '8px 18px', borderRadius: 20, fontSize: 13, fontWeight: 600,
-                  background: activeCategory === cat ? 'linear-gradient(135deg, #f97316, #ea580c)' : 'var(--surface-2)',
-                  color: activeCategory === cat ? 'white' : 'var(--text-secondary)',
-                  border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+                  width: '100%',
+                  padding: '12px 40px 12px 16px',
+                  borderRadius: 12,
+                  background: 'var(--surface-2)',
+                  color: 'var(--text-primary)',
+                  border: '1px solid var(--border-subtle)',
+                  fontSize: 16,
+                  fontWeight: 600,
+                  outline: 'none',
+                  cursor: 'pointer',
+                  appearance: 'none',
+                  WebkitAppearance: 'none'
                 }}
               >
-                {cat}
-              </button>
-            ))}
+                {CATEGORIES.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              <div style={{
+                position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)',
+                pointerEvents: 'none', color: '#f97316', fontSize: 12
+              }}>
+                ▼
+              </div>
+            </div>
           </div>
 
           {/* Grille des articles */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 14 }}>
+          <div className="new-order-items-grid">
             {filtered.map(item => {
               const inCart = cart.find(c => c.id === item.id);
               return (
@@ -161,7 +196,7 @@ export default function NewOrder() {
         </div>
 
         {/* Panier - Colonne droite */}
-        <div style={{ position: 'sticky', top: 100 }}>
+        <div className="new-order-sidebar">
           <div style={{
             background: 'var(--surface-2)', border: '1px solid var(--border-subtle)',
             borderRadius: 20, overflow: 'hidden'
@@ -210,7 +245,7 @@ export default function NewOrder() {
                   fontSize: 12, color: 'var(--text-muted)', fontWeight: 600,
                   textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: 6
                 }}>Type</label>
-                <div style={{ display: 'flex', gap: 8 }}>
+                <div className="order-type-buttons">
                   {[['dine-in', '🍽️ Sur place', Table2], ['delivery', '🛵 Livraison', Truck]].map(([val, lbl]) => (
                     <button
                       key={val} onClick={() => setOrderType(val)}

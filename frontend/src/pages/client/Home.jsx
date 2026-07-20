@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Star, Clock, ShoppingBag, Plus, ShoppingCart, Flame, CheckCircle } from 'lucide-react';
+import { Search, Star, Clock, ShoppingBag, Plus, ShoppingCart, Flame, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
@@ -16,6 +16,7 @@ export default function ClientHome() {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('Tous');
   const [addedItem, setAddedItem] = useState(null);
+  const categoryScrollRef = useRef(null);
 
   const availableItems = menuItems.filter(m => m.available);
 
@@ -33,6 +34,15 @@ export default function ClientHome() {
   };
 
   const popularItems = availableItems.filter(m => m.popular).slice(0, 4);
+
+  const scrollCategories = (direction) => {
+    if (categoryScrollRef.current) {
+      categoryScrollRef.current.scrollBy({
+        left: direction === 'left' ? -180 : 180,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <div>
@@ -136,11 +146,12 @@ export default function ClientHome() {
               <Flame size={20} color="#f97316" />
               <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)' }}>Les plus populaires</h2>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 16 }}>
+            <div className="home-popular-grid">
               {popularItems.map((item, i) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
+                  className="home-popular-card"
                   style={{
                     background: 'linear-gradient(135deg, var(--surface-2), var(--surface-3))',
                     border: '1px solid rgba(249,115,22,0.2)',
@@ -165,6 +176,7 @@ export default function ClientHome() {
                     </div>
                   </div>
                   <button
+                    className="home-popular-add-btn"
                     onClick={() => handleAddToCart(item)}
                     style={{
                       width: 36, height: 36, borderRadius: '50%',
@@ -183,30 +195,48 @@ export default function ClientHome() {
         )}
 
         {/* Filtre par catégorie */}
-        <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 16, marginBottom: 32, scrollbarWidth: 'none' }}>
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              style={{
-                padding: '9px 20px', borderRadius: 50, fontSize: 14, fontWeight: 600,
-                background: activeCategory === cat ? 'linear-gradient(135deg, #f97316, #ea580c)' : 'var(--surface-2)',
-                color: activeCategory === cat ? 'white' : 'var(--text-primary)',
-                border: '1px solid', borderColor: activeCategory === cat ? 'transparent' : 'var(--border-subtle)',
-                whiteSpace: 'nowrap', cursor: 'pointer', transition: 'all 0.2s',
-              }}
-            >
-              {cat}
-            </button>
-          ))}
+        <div className="home-category-wrapper">
+          <button
+            className="home-category-nav-btn"
+            onClick={() => scrollCategories('left')}
+            aria-label="Défiler vers la gauche"
+          >
+            <ChevronLeft size={16} />
+          </button>
+
+          <div ref={categoryScrollRef} className="home-category-scroll">
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className="home-category-btn"
+                style={{
+                  background: activeCategory === cat ? 'linear-gradient(135deg, #f97316, #ea580c)' : 'var(--surface-2)',
+                  color: activeCategory === cat ? 'white' : 'var(--text-primary)',
+                  borderColor: activeCategory === cat ? 'transparent' : 'var(--border-subtle)',
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          <button
+            className="home-category-nav-btn"
+            onClick={() => scrollCategories('right')}
+            aria-label="Défiler vers la droite"
+          >
+            <ChevronRight size={16} />
+          </button>
         </div>
 
         {/* Grille du menu */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 }}>
+        <div className="home-menu-grid">
           {filtered.map((item, i) => (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
+              className="home-menu-card"
               style={{
                 background: 'var(--surface-2)', border: '1px solid var(--border-subtle)',
                 borderRadius: 20, overflow: 'hidden', transition: 'all 0.2s',
@@ -215,7 +245,7 @@ export default function ClientHome() {
               whileHover={{ y: -4 }}
             >
               {/* Image / Émoji du plat */}
-              <div style={{
+              <div className="home-menu-card-media" style={{
                 height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center',
                 background: 'linear-gradient(135deg, rgba(249,115,22,0.08), rgba(234,88,12,0.04))',
                 borderBottom: '1px solid var(--border-subtle)', fontSize: 64, position: 'relative',
@@ -234,16 +264,17 @@ export default function ClientHome() {
                 )}
               </div>
 
-              <div style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3 }}>{item.name}</h3>
-                  <span style={{ fontSize: 16, fontWeight: 800, color: '#f97316', whiteSpace: 'nowrap', marginLeft: 8 }}>
+              <div className="home-menu-card-content" style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div className="home-menu-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <h3 className="home-menu-card-title" style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3 }}>{item.name}</h3>
+                  <span className="home-menu-card-price" style={{ fontSize: 16, fontWeight: 800, color: '#f97316', whiteSpace: 'nowrap', marginLeft: 8 }}>
                     {item.price.toLocaleString('fr-FR')} FCFA
                   </span>
                 </div>
-                <p style={{ color: 'var(--text-muted)', fontSize: 13, flex: 1, lineHeight: 1.5 }}>{item.description}</p>
+                <p className="home-menu-card-desc" style={{ color: 'var(--text-muted)', fontSize: 13, flex: 1, lineHeight: 1.5 }}>{item.description}</p>
 
                 <button
+                  className="home-menu-card-btn"
                   onClick={() => handleAddToCart(item)}
                   style={{
                     width: '100%', padding: '10px', borderRadius: 12,

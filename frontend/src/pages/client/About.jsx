@@ -54,7 +54,7 @@ export default function About() {
       <div style={{ maxWidth: 1200, margin: '-60px auto 0', position: 'relative', padding: '0 24px' }}>
 
         {/* Cartes d'information */}
-        <div style={{
+        <div className="about-info-grid" style={{
           display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
           gap: 24, marginBottom: 60
         }}>
@@ -113,7 +113,7 @@ export default function About() {
         </div>
 
         {/* Histoire du restaurant */}
-        <div style={{
+        <div className="about-story-grid" style={{
           marginBottom: 60, display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 40, alignItems: 'center'
         }}>
@@ -133,6 +133,7 @@ export default function About() {
           </div>
           <div>
             <img
+              className="about-story-image"
               src="/images/about-chef.jpg"
               alt="Cuisine"
               style={{ width: '100%', borderRadius: 24, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}

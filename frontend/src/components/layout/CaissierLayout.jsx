@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, UtensilsCrossed, ShoppingBag,
-  Table2, Users, BarChart2, LogOut, Bell, Receipt, Plus, Menu, X
+  LayoutDashboard, ShoppingBag,
+  Users, BarChart2, LogOut, Bell, Plus, Menu
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
@@ -12,8 +12,6 @@ const NAV_ITEMS = [
   { path: '/caissier/dashboard', icon: LayoutDashboard, label: 'Tableau de bord' },
   { path: '/caissier/orders', icon: ShoppingBag, label: 'Commandes', badge: true },
   { path: '/caissier/new-order', icon: Plus, label: 'Nouvelle commande' },
-  { path: '/caissier/menu', icon: UtensilsCrossed, label: 'Menu' },
-  { path: '/caissier/tables', icon: Table2, label: <span translate="no" className="notranslate">Tables</span> },
   { path: '/caissier/staff', icon: Users, label: 'Personnel' },
   { path: '/caissier/reports', icon: BarChart2, label: 'Rapports' },
 ];
@@ -22,6 +20,7 @@ export default function CaissierLayout() {
   const { currentUser, logout } = useAuth();
   const { orders, restaurant } = useData();
   const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const pendingOrders = orders.filter(o =>
@@ -32,8 +31,10 @@ export default function CaissierLayout() {
     logout();
   };
 
+  const showMobileFooter = location.pathname.startsWith('/caissier');
+
   return (
-    <div className="app-layout">
+    <div className="app-layout caissier-layout">
       {/* Overlay mobile */}
       <div
         className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`}
@@ -193,6 +194,23 @@ export default function CaissierLayout() {
           <Outlet />
         </div>
       </main>
+
+      {showMobileFooter && (
+        <nav className="caissier-mobile-footer" aria-label="Navigation mobile caissier">
+          <NavLink to="/caissier/dashboard" className="caissier-mobile-footer-item">
+            <LayoutDashboard size={18} />
+            <span>Accueil</span>
+          </NavLink>
+          <NavLink to="/caissier/orders" className="caissier-mobile-footer-item">
+            <ShoppingBag size={18} />
+            <span>Commandes</span>
+          </NavLink>
+          <NavLink to="/caissier/new-order" className="caissier-mobile-footer-item">
+            <Plus size={18} />
+            <span>Nvlle</span>
+          </NavLink>
+        </nav>
+      )}
 
       <style>{`
         @keyframes caissierPulse {
