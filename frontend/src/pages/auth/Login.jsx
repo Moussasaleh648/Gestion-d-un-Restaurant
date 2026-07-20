@@ -134,7 +134,7 @@ export default function Login() {
                 type="email"
                 className="form-input"
                 style={{ paddingLeft: 42 }}
-                placeholder="votre@email.com"
+                placeholder="moussa@email.com"
                 value={form.email}
                 onChange={e => setForm({ ...form, email: e.target.value })}
                 required

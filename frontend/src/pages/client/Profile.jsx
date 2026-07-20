@@ -59,6 +59,7 @@ export default function ClientProfile() {
                     transform: 'translateY(-50%)', color: 'var(--text-muted)'
                   }} />
                   <input className="form-input" style={{ paddingLeft: 42 }} value={form.name}
+                    placeholder="Moussa Mahamat"
                     onChange={e => setForm({ ...form, name: e.target.value })} required />
                 </div>
               </div>
@@ -70,6 +71,7 @@ export default function ClientProfile() {
                     transform: 'translateY(-50%)', color: 'var(--text-muted)'
                   }} />
                   <input type="email" className="form-input" style={{ paddingLeft: 42 }}
+                    placeholder="moussa@email.com"
                     value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
                 </div>
               </div>
@@ -83,7 +85,25 @@ export default function ClientProfile() {
                   transform: 'translateY(-50%)', color: 'var(--text-muted)'
                 }} />
                 <input className="form-input" style={{ paddingLeft: 42 }} value={form.phone}
-                  onChange={e => setForm({ ...form, phone: e.target.value })} />
+                  placeholder="+235 66 00 00 00"
+                  onChange={e => {
+                    let cleaned = e.target.value.replace(/[^\d+]/g, '');
+                    let formatted = cleaned;
+                    if (cleaned.startsWith('+235')) {
+                      const rest = cleaned.slice(4);
+                      const chunks = rest.match(/.{1,2}/g) || [];
+                      formatted = '+235' + (chunks.length ? ' ' + chunks.join(' ') : '');
+                    } else if (cleaned.startsWith('+')) {
+                      const prefix = cleaned.slice(0, 4);
+                      const rest = cleaned.slice(4);
+                      const chunks = rest.match(/.{1,2}/g) || [];
+                      formatted = prefix + (chunks.length ? ' ' + chunks.join(' ') : '');
+                    } else {
+                      const chunks = cleaned.match(/.{1,2}/g) || [];
+                      formatted = chunks.join(' ');
+                    }
+                    setForm({ ...form, phone: formatted });
+                  }} />
               </div>
             </div>
 

@@ -67,8 +67,8 @@ export default function Register() {
           )}
 
           {[
-            { key: 'name', label: 'Nom complet', placeholder: 'Jean Dupont', icon: User, type: 'text' },
-            { key: 'email', label: 'Email', placeholder: 'jean@email.com', icon: Mail, type: 'email' },
+            { key: 'name', label: 'Nom complet', placeholder: 'Moussa Mahamat', icon: User, type: 'text' },
+            { key: 'email', label: 'Email', placeholder: 'moussa@email.com', icon: Mail, type: 'email' },
             { key: 'phone', label: 'Téléphone', placeholder: '+235 66 00 00 00', icon: Phone, type: 'tel' },
           ].map(field => (
             <div key={field.key} className="form-group" style={{ marginBottom: 16 }}>
@@ -84,7 +84,28 @@ export default function Register() {
                   style={{ paddingLeft: 42 }}
                   placeholder={field.placeholder}
                   value={form[field.key]}
-                  onChange={e => setForm({ ...form, [field.key]: e.target.value })}
+                  onChange={e => {
+                    if (field.key === 'phone') {
+                      let cleaned = e.target.value.replace(/[^\d+]/g, '');
+                      let formatted = cleaned;
+                      if (cleaned.startsWith('+235')) {
+                        const rest = cleaned.slice(4);
+                        const chunks = rest.match(/.{1,2}/g) || [];
+                        formatted = '+235' + (chunks.length ? ' ' + chunks.join(' ') : '');
+                      } else if (cleaned.startsWith('+')) {
+                        const prefix = cleaned.slice(0, 4);
+                        const rest = cleaned.slice(4);
+                        const chunks = rest.match(/.{1,2}/g) || [];
+                        formatted = prefix + (chunks.length ? ' ' + chunks.join(' ') : '');
+                      } else {
+                        const chunks = cleaned.match(/.{1,2}/g) || [];
+                        formatted = chunks.join(' ');
+                      }
+                      setForm({ ...form, phone: formatted });
+                    } else {
+                      setForm({ ...form, [field.key]: e.target.value });
+                    }
+                  }}
                   required={field.key !== 'phone'}
                 />
               </div>
